@@ -71,7 +71,7 @@ def get_average_salary(data):
     salaries = []
     for item in data['items']:
         salary = predict_rub_salary(item)
-        if salary != None:
+        if salary is not None:
             salaries.append(salary)
     try:
         avg_salary = int(mean(salaries))

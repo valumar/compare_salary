@@ -42,12 +42,12 @@ def get_top_languages(languages):
 def predict_rub_salary(vacancy):
     salary = vacancy["salary"]
     tax = 1
-    if salary["gross"] == True:
+    if salary["gross"]:
         tax = 0.87
     if salary["currency"] == "RUR":
-        if salary["from"] != None and salary["to"] != None:
+        if salary["from"] is not None and salary["to"] is not None:
             return (salary["from"] + salary["to"]) / 2 * tax
-        elif salary["from"] == None:
+        elif salary["from"] is None:
             return salary["to"] * 0.8 * tax
         else:
             return salary["from"] * 1.2 * tax
@@ -86,7 +86,7 @@ def get_average_salary(data):
     salaries = []
     for item in data['items']:
         salary = predict_rub_salary(item)
-        if salary != None:
+        if salary is not None:
             salaries.append(salary)
     avg_salary = int(mean(salaries))
     median_salary = int(median(salaries))
