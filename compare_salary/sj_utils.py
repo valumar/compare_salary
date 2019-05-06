@@ -86,11 +86,11 @@ def get_top_languages(languages):
     for language in languages:
         data = get_data(language)
         average_salary, median_salary, vacancies_processed = get_average_salary(data)
-        top_languages[f"{language}"] = {}
-        top_languages[f"{language}"]["vacancies_found"] = get_vacancies_num(language)
-        top_languages[f"{language}"]["average_salary"] = average_salary
-        top_languages[f"{language}"]["median_salary"] = median_salary
-        top_languages[f"{language}"]["vacancies_processed"] = vacancies_processed
+        top_languages[language] = {}
+        top_languages[language]["vacancies_found"] = get_vacancies_num(language)
+        top_languages[language]["average_salary"] = average_salary
+        top_languages[language]["median_salary"] = median_salary
+        top_languages[language]["vacancies_processed"] = vacancies_processed
     return top_languages
 
 
