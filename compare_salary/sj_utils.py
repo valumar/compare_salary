@@ -41,7 +41,7 @@ def predict_rub_salary(vacancy):
             return vacancy["payment_from"] * 1.2
 
 
-def get_avg_salary(language):
+def get_data(language):
     page = 0
     whole_data = {"items": []}
     more = True
@@ -64,9 +64,12 @@ def get_avg_salary(language):
             page += 1
             whole_data["items"] += page_data["objects"]
         logging.debug(f"Language: {language} Page: {page}")
+    return whole_data
 
+
+def get_average_salary(data):
     salaries = []
-    for item in whole_data['items']:
+    for item in data['items']:
         salary = predict_rub_salary(item)
         if salary != None:
             salaries.append(salary)
@@ -81,7 +84,8 @@ def get_avg_salary(language):
 def get_top_languages(languages):
     top_languages = {}
     for language in languages:
-        average_salary, median_salary, vacancies_processed = get_avg_salary(language)
+        data = get_data(language)
+        average_salary, median_salary, vacancies_processed = get_average_salary(data)
         top_languages[f"{language}"] = {}
         top_languages[f"{language}"]["vacancies_found"] = get_vacancies_num(language)
         top_languages[f"{language}"]["average_salary"] = average_salary
