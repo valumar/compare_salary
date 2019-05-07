@@ -42,9 +42,10 @@ def get_data(language):
     more = True
     while more:
         payload = {
-            "keywords[1][keys]": f"программист {language}",
-            "t": 4,
-            "no_agreement": 1,
+            "keywords[1][keys]": f"программист {language}",  # searching only in vacancy title
+            "t": 4,                                          # a region. 4 - for Moscow city
+                                                             # for more info see https://api.superjob.ru/#townlist
+            "no_agreement": 1,                               # disables showing vacancies w/o salary
             "page": page,
             "count": 100
         }

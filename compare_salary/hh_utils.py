@@ -14,8 +14,9 @@ hh_api_command = "vacancies"
 def get_vacancies_num(language):
     payload = {
         "text": f"программист {language}",
-        "area": 1,
-        "period": 30
+        "area": 1,                          # a region, 1 - for Moscow city, for more details see
+                                            # https://github.com/hhru/api/blob/master/docs_eng/areas.md
+        "period": 30                        # a range of days within which vacancies must be found
     }
     try:
         response = requests.get(
