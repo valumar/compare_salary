@@ -99,19 +99,4 @@ def get_top_languages(languages):
 
 
 if __name__ == '__main__':
-    languages = [
-        "Python",
-        "Java",
-        "PHP",
-        "JavaScript",
-        "Ruby",
-        "C++",
-        "C#",
-        "Go",
-        "Objective-C",
-        "Scala",
-        "Swift",
-    ]
-    sj_data = get_top_languages(languages)
-    print(sj_data)
     pass
