@@ -22,14 +22,18 @@ def get_vacancies_num(language):
         "t": 4,
         "no_agreement": 1
     }
-    response = requests.get(
-        BASE_SJ_API_URL + sj_api_command,
-        headers=SJ_HEADERS,
-        params=payload
-    )
-    if response.ok:
-        vacancies = response.json()['total']
-    return vacancies
+    try:
+        response = requests.get(
+            BASE_SJ_API_URL + sj_api_command,
+            headers=SJ_HEADERS,
+            params=payload
+        )
+        response.raise_for_status()
+        if response.ok:
+            vacancies = response.json()['total']
+        return vacancies
+    except (requests.exceptions.HTTPError, NameError):
+        logging.exception("HTTPError")
 
 
 def get_data(language):
@@ -44,17 +48,22 @@ def get_data(language):
             "page": page,
             "count": 100
         }
-        response = requests.get(
-            BASE_SJ_API_URL + sj_api_command,
-            headers=SJ_HEADERS,
-            params=payload
-        )
-        if response.ok:
-            page_data = response.json()
-            more = page_data["more"]
-            page += 1
-            whole_data["items"] += page_data["objects"]
-        logging.debug(f"Language: {language} Page: {page}")
+        try:
+            response = requests.get(
+                BASE_SJ_API_URL + sj_api_command,
+                headers=SJ_HEADERS,
+                params=payload
+            )
+            response.raise_for_status()
+            if response.ok:
+                page_data = response.json()
+                more = page_data["more"]
+                page += 1
+                whole_data["items"] += page_data["objects"]
+            logging.debug(f"Language: {language} Page: {page}")
+        except (requests.exceptions.HTTPError, NameError):
+            logging.exception("HTTPError")
+            break
     return whole_data
 
 
@@ -89,4 +98,19 @@ def get_top_languages(languages):
 
 
 if __name__ == '__main__':
+    languages = [
+        "Python",
+        "Java",
+        "PHP",
+        "JavaScript",
+        "Ruby",
+        "C++",
+        "C#",
+        "Go",
+        "Objective-C",
+        "Scala",
+        "Swift",
+    ]
+    sj_data = get_top_languages(languages)
+    print(sj_data)
     pass

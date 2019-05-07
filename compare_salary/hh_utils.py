@@ -17,14 +17,18 @@ def get_vacancies_num(language):
         "area": 1,
         "period": 30
     }
-    response = requests.get(
-        BASE_API_HH_URL + hh_api_command,
-        headers=HH_HEADERS,
-        params=payload
-    )
-    if response.ok:
-        vacancies = response.json()['found']
-    return vacancies
+    try:
+        response = requests.get(
+            BASE_API_HH_URL + hh_api_command,
+            headers=HH_HEADERS,
+            params=payload
+        )
+        response.raise_for_status()
+        if response.ok:
+            vacancies = response.json()['found']
+        return vacancies
+    except (requests.exceptions.HTTPError, NameError):
+        logging.exception("HTTPError")
 
 
 def get_top_languages(languages):
@@ -55,17 +59,22 @@ def get_data(language):
             "page": page,
             "per_page": 100
         }
-        response = requests.get(
-            BASE_API_HH_URL + hh_api_command,
-            headers=HH_HEADERS,
-            params=payload
-        )
-        if response.ok:
-            page_data = response.json()
-            pages_number = page_data["pages"]
-            page += 1
-            whole_data["items"] += page_data["items"]
-        logging.debug(f"Language: {language} Page: {page} from {pages_number}")
+        try:
+            response = requests.get(
+                BASE_API_HH_URL + hh_api_command,
+                headers=HH_HEADERS,
+                params=payload
+            )
+            response.raise_for_status()
+            if response.ok:
+                page_data = response.json()
+                pages_number = page_data["pages"]
+                page += 1
+                whole_data["items"] += page_data["items"]
+            logging.debug(f"Language: {language} Page: {page} from {pages_number}")
+        except (requests.exceptions.HTTPError, NameError):
+            logging.exception("HTTPError")
+            break
     return whole_data
 
 
