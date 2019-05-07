@@ -1,6 +1,7 @@
 import requests
 import logging
 from statistics import mean, median
+from salary_utils import predict_rub_salary
 
 
 BASE_API_HH_URL = "https://api.hh.ru/"
@@ -39,20 +40,6 @@ def get_top_languages(languages):
     return top_languages
 
 
-def predict_rub_salary(vacancy):
-    salary = vacancy["salary"]
-    tax = 1
-    if salary["gross"]:
-        tax = 0.87
-    if salary["currency"] == "RUR":
-        if salary["from"] is not None and salary["to"] is not None:
-            return (salary["from"] + salary["to"]) / 2 * tax
-        elif salary["from"] is None:
-            return salary["to"] * 0.8 * tax
-        else:
-            return salary["from"] * 1.2 * tax
-
-
 def get_data(language):
     page = 0
     pages_number = 1
@@ -85,9 +72,14 @@ def get_data(language):
 def get_average_salary(data):
     salaries = []
     for item in data['items']:
-        salary = predict_rub_salary(item)
-        if salary is not None:
-            salaries.append(salary)
+        if item["salary"]["currency"] == "RUR":
+            tax = 1
+            if item["salary"]["gross"]:
+                tax = 0.87
+            salaries_range = item["salary"]["from"], item["salary"]["to"], tax
+            salary = predict_rub_salary(salaries_range)
+            if salary is not None:
+                salaries.append(salary)
     avg_salary = int(mean(salaries))
     median_salary = int(median(salaries))
     return avg_salary, median_salary, len(salaries)

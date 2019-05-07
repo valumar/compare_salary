@@ -3,6 +3,7 @@ import os
 import logging
 import dotenv
 from statistics import mean, median
+from salary_utils import predict_rub_salary
 
 dotenv.load_dotenv()
 
@@ -29,16 +30,6 @@ def get_vacancies_num(language):
     if response.ok:
         vacancies = response.json()['total']
     return vacancies
-
-
-def predict_rub_salary(vacancy):
-    if vacancy["currency"] == "rub":
-        if vacancy["payment_from"] != 0 and vacancy["payment_to"] != 0:
-            return (vacancy["payment_from"] + vacancy["payment_to"]) / 2
-        elif vacancy["payment_from"] == 0:
-            return vacancy["payment_to"] * 0.8
-        else:
-            return vacancy["payment_from"] * 1.2
 
 
 def get_data(language):
@@ -69,10 +60,13 @@ def get_data(language):
 
 def get_average_salary(data):
     salaries = []
+    tax = 1
     for item in data['items']:
-        salary = predict_rub_salary(item)
-        if salary is not None:
-            salaries.append(salary)
+        if item["currency"] == "rub":
+            salaries_range = item["payment_from"], item["payment_to"], tax
+            salary = predict_rub_salary(salaries_range)
+            if salary is not None:
+                salaries.append(salary)
     try:
         avg_salary = int(mean(salaries))
         median_salary = int(median(salaries))
